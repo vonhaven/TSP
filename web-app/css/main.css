@@ -1,0 +1,31 @@
+body {
+  background-color:#eee;
+  color:#666;
+  font-family:"Courier New";
+  font-size:20px;
+}
+
+canvas {
+  background-color:#e4e4e4;
+  border:1px solid #888;
+  margin:12px auto;
+}
+
+#main {
+  margin:0 auto;
+  width:900px;
+}
+
+.title {
+  border-bottom:1px solid #888;
+  color:#444;
+  font-size:28px;
+  margin:24px 0 8px 0;
+  padding-bottom:4px;
+  padding-left:12px;
+  width:800px;
+}
+
+.content {
+  padding-left:12px;
+}
