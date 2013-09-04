@@ -14,7 +14,15 @@
         CECS 545<br/>
         Solution by Nicholas Harshfield
       </div>
-      <canvas width="800" height="600"/>
+      <g:each var="tsp" in="${tsps}">
+        <a href="/TSP/${tsp.name}">
+          ${tsp.name}
+        </a>
+      </g:each>
+      <div>activeProblem: ${activeProblem}</div>
+      <g:if test="${activeProblem}">
+        <canvas width="800" height="600"/>
+      </g:if>
     </div>
 	</body>
 </html>

@@ -13,49 +13,56 @@ class ProblemService {
     }
 
     private void constructFromFile(File file) {
-        String name
+        String name = ""
         String comment = ""
         int dimension = 0
         int index = 0
-        List<Node> nodes = []
+        def nodes = []
 
-        static final String typeHeader = "TYPE: "      
-        static final String nameHeader = "NAME: "      
-        static final String commentHeader = "COMMENT: "      
-        static final String dimensionHeader = "DIMENSION: "      
-        static final String nodeHeader = "NODE_COORD_SECTION"      
+        final String typeHeader = "TYPE: "      
+        final String nameHeader = "NAME: "      
+        final String commentHeader = "COMMENT: "      
+        final String dimensionHeader = "DIMENSION: "      
+        final String edgeWeightHeader = "EDGE_WEIGHT_TYPE: "      
+        final String nodeHeader = "NODE_COORD_SECTION"      
 
-        file.eachLine() { line ->
+        file.getText().split("\n").each() { line ->
             if (line.startsWith(typeHeader)) {
-                if (line.replace(typeHeader, "") != "TSP") {
-                    throw new IllegalArgumentException("TSP filemuid nodes.")
-                }
+                assert line.replace(typeHeader, "").trim() == "TSP"
+            }
+            else if (line.startsWith(edgeWeightHeader)) {
+                assert line.replace(edgeWeightHeader, "").trim() == "EUC_2D"
             }
             else if (line.startsWith(nameHeader)) {
-                name = line.replace(typeHeader, "")
+                name = line.split(" ")[1].trim()
             }
             else if (line.startsWith(commentHeader)) {
-                comment += line.replace(commentHeader, "")
+                comment += line.split(" ")[1].trim()
             }
             else if (line.startsWith(dimensionHeader)) {
-                dimension = line.replace(dimensionHeader, "").toInteger()
+                dimension = line.split(" ")[1].trim().toInteger()
             }
-            else if (line.startsWith(nodeHeader) {
-                if (dimension < 2) {
-                    throw new IllegalArgumentException("TSP file must contain at least 2 valid nodes.")
-                }
+            else if (line.startsWith(nodeHeader)) {
+                assert dimension >= 2
             }
-            else if (line.startsWith(index + 1 + " ")) {
-                String nodeLine = line.replace(index.toString + " ", "")
-                def coords = nodeLine.split(" ")
-                nodes.add(new Node(x: coords[0], y: coords[1]), index) 
+            else if (line.startsWith(String.format("%s ", (index + 1)))) {
+                def coords = line.split(" ")
+                assert coords.size() == 3
+                def node = new Node(x: coords[0], y: coords[1])
+                node.save(flush: true, failOnError: true)
+                nodes.add(index, node)
                 index++
             }
+            else {
+                println "Invalid line in TSP: " + line
+            }
         }    
-        new TSP(
+        def tsp = new TSP(
             name: name,
             comment: comment,
             nodes: nodes
-        ).save(flush: true, failOnError: true)
+        )
+        tsp.save(flush: true, failOnError: true)
+        println String.format(" --> TSP created from file: %s", tsp.name)
     }
 }
