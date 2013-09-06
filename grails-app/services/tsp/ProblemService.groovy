@@ -13,11 +13,11 @@ class ProblemService {
     }
 
     private void constructFromFile(File file) {
-        String name = ""
+        String name
         String comment = ""
         int dimension = 0
         int index = 0
-        def nodes = []
+        List<Node> nodes = []
 
         final String typeHeader = "TYPE: "      
         final String nameHeader = "NAME: "      
@@ -34,13 +34,13 @@ class ProblemService {
                 assert line.replace(edgeWeightHeader, "").trim() == "EUC_2D"
             }
             else if (line.startsWith(nameHeader)) {
-                name = line.split(" ")[1].trim()
+                name = line.split(": ")[1].trim()
             }
             else if (line.startsWith(commentHeader)) {
-                comment += line.split(" ")[1].trim()
+                comment += line.split(": ")[1].trim() + " "
             }
             else if (line.startsWith(dimensionHeader)) {
-                dimension = line.split(" ")[1].trim().toInteger()
+                dimension = line.split(": ")[1].trim().toInteger()
             }
             else if (line.startsWith(nodeHeader)) {
                 assert dimension >= 2
@@ -50,7 +50,7 @@ class ProblemService {
                 assert coords.size() == 3
                 def node = new Node(x: coords[0], y: coords[1])
                 node.save(flush: true, failOnError: true)
-                nodes.add(index, node)
+                nodes.add(node)
                 index++
             }
             else {
@@ -63,6 +63,6 @@ class ProblemService {
             nodes: nodes
         )
         tsp.save(flush: true, failOnError: true)
-        println String.format(" --> TSP created from file: %s", tsp.name)
+        println String.format(" --> TSP created from file: %s - %s", tsp.name, tsp.comment, tsp.nodes.size())
     }
 }

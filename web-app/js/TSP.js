@@ -1,20 +1,31 @@
 (function() {
-  var TSP, tsp, _class;
+  var TSP;
 
   TSP = (function() {
 
-    function TSP() {
-      _class.apply(this, arguments);
-    }
+    TSP.prototype.name = null;
 
-    _class = TSP.nodes;
+    TSP.prototype.comment = null;
+
+    TSP.prototype.nodes = null;
+
+    TSP.prototype.canvas = null;
+
+    TSP.prototype.context = null;
+
+    function TSP(name, comment, nodes) {
+      this.name = name;
+      this.comment = comment;
+      this.nodes = nodes;
+      alert("" + this.name + ": " + this.comment);
+      this.canvas = document.getElementById('map');
+      this.context = this.canvas.getContext('2d');
+    }
 
     return TSP;
 
   })();
 
-  tsp = new TSP(12);
-
-  alert(TSP.nodes);
+  window.TSP = TSP;
 
 }).call(this);

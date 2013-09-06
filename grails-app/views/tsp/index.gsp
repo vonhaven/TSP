@@ -7,21 +7,30 @@
 	<body>
     <div id="main">
       <div class="title">
-        TSP: Brute Force Edition
+        The Traveling Salesman Problem
+        <div class="subtitle">
+          by Nicholas Harshfield | CECS-545 | Fall 2013
+        </div>
       </div>
       <div class="content">
-        The Traveling Salesperson Problem<br/>
-        CECS 545<br/>
-        Solution by Nicholas Harshfield
+        I. The Brute Force Solution
       </div>
+      <div class="content">
       <g:each var="tsp" in="${tsps}">
-        <a href="/TSP/${tsp.name}">
+        <a class="tsp" href="/TSP/${tsp.name}">
           ${tsp.name}
         </a>
       </g:each>
-      <div>activeProblem: ${activeProblem}</div>
+      </div>
+      <div class="content">
+        activeProblem: ${activeProblem.name}
+      </div>
       <g:if test="${activeProblem}">
-        <canvas width="800" height="600"/>
+        <canvas id="map" width="800" height="600"/>
+        <g:javascript src="TSP.js"/>
+        <script type="text/JavaScript">
+          var tsp = new TSP("${activeProblem.name}", "${activeProblem.comment}", "");
+        </script>
       </g:if>
     </div>
 	</body>
