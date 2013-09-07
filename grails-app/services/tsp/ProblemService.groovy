@@ -17,7 +17,8 @@ class ProblemService {
         String comment = ""
         int dimension = 0
         int index = 0
-        List<Node> nodes = []
+        String x = ""
+        String y = ""
 
         final String typeHeader = "TYPE: "      
         final String nameHeader = "NAME: "      
@@ -48,9 +49,13 @@ class ProblemService {
             else if (line.startsWith(String.format("%s ", (index + 1)))) {
                 def coords = line.split(" ")
                 assert coords.size() == 3
-                def node = new Node(x: coords[0], y: coords[1])
-                node.save(flush: true, failOnError: true)
-                nodes.add(node)
+                assert coords[0].toInteger() == index + 1
+                if (index > 0) {
+                    x += ","
+                    y += ","
+                }
+                x += coords[1].trim()
+                y += coords[2].trim()
                 index++
             }
             else {
@@ -59,10 +64,12 @@ class ProblemService {
         }    
         def tsp = new TSP(
             name: name,
-            comment: comment,
-            nodes: nodes
+            comment: comment.trim(),
+            dimension: dimension,
+            x: x,
+            y: y
         )
         tsp.save(flush: true, failOnError: true)
-        println String.format(" --> TSP created from file: %s - %s", tsp.name, tsp.comment, tsp.nodes.size())
+        println String.format(" --> TSP created from file: %s [%s] - %s", tsp.name, tsp.dimension, tsp.comment)
     }
 }

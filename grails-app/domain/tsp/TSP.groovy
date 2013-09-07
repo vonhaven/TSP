@@ -3,12 +3,15 @@ package tsp
 class TSP {
     String name
     String comment
-
-    static hasMany = [nodes: Node]
+    int dimension
+    String x
+    String y
 
     static constraints = {
         name blank: false, unique: true
         comment blank: false
-        nodes size: 2..15 
+        dimension size: 2..50 
+        x blank: false
+        y blank: false
     }
 }

@@ -2,11 +2,16 @@ body {
   background-color:#eee;
   color:#666;
   font-family:"Courier New";
-  font-size:20px;
+  font-size:14px;
+}
+
+a {
+  color:#666;
+  text-decoration: none;
 }
 
 canvas {
-  background-color:#e4e4e4;
+  background-color:#f2f2f2;
   border:1px solid #888;
   margin:12px auto;
 }
@@ -21,6 +26,7 @@ canvas {
   color:#444;
   font-size:28px;
   margin-top:24px;
+  margin-bottom:2px;
   padding-bottom:8px;
   padding-left:12px;
   width:790px;
@@ -30,8 +36,38 @@ canvas {
   font-size:18px;
 }
 
+.tsp {
+  background-color:#f2f2f2;
+  border:1px solid #aaa;
+  display:inline-block;
+  font-size:17px; 
+  text-align:center;
+  margin:2px 0;
+  width:144px;
+}
+
 .content {
   border-bottom:1px solid #888;
-  padding:8px 12px 8px 0;
+  padding-bottom:8px;
+  padding-left:12px;
+  padding-top:8px;
   width:790px;
+}
+
+.red {
+  color:#844;
+}
+
+.green {
+  color:#484;
+}
+
+.blue {
+  color:#448;
+}
+
+.bigger {
+  display:inline-block;
+  font-size:16px;
+  width:110px;
 }
