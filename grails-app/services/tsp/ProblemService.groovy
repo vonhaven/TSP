@@ -14,41 +14,17 @@ class ProblemService {
     }
 
     /** Solves the TSP by brute force, returning a String
-        of node indexes in order of shortest calculated path */
+        of node indices in order of shortest calculated path */
     def solveByForce(TSP tsp) {
-        List<String> xs = tsp.x.split()
-        List<String> ys = tsp.y.split()
-        assert xs.size() == ys.size()
-
-        List<float> xf = []
-        List<float> yf = []
-        xs.each() {
-            xf += it.toFloat()  
-        }
-        ys.each() {
-            yf += it.toFloat()
-        }
-        assert xf.size() == yf.size()
-
-        new BruteForceSolver(xf, yf)
-        permutate(remaining)
+        def nodes = tsp.getNodes()
+        return new TSPSolver(nodes.xf, nodes.yf).solveByForce()
     }
 
-    private String permutate(List<int> remainingNode) {
-        if (remainingNodes.size() == 0) {
-             
-        }
-        else {
-            reducedList.each() { node ->
-                List<int> reducedList = remainingNodes.clone()
-                reducedList.remove(node)
-                permutate(reducedList)
-            } 
-        }
-    }
-    
-    private float getDistanceBetweenNodes(String node1, String node2) {
-        
+    /** Paths the TSP randomly, returning a String of node
+        indices representing a random path through the TSP */
+    def solveByRandom(TSP tsp) {
+        def nodes = tsp.getNodes()
+        return new TSPSolver(nodes.xf, nodes.yf).solveByRandom()
     }
 
     /** Turns a randomly generated TSP file into a TSP file

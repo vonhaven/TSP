@@ -14,7 +14,7 @@
             </div>
             <div class="content">
                 <a class="subtitle" href="reset">
-                    I. Brute Force
+                    I. Brute Force / Random Solutions
                 </a>
             </div>
             <div class="content">
@@ -31,9 +31,15 @@
                     <span class="bigger blue">Dimension</span>${activeProblem.dimension} nodes
                 </div>
                 <div class="content">
-                    <a class="tsp" href="solve/${activeProblem.name}">
-                        Solve!
+                    <a class="tsp" href="solveByForce/${activeProblem.name}">
+                        Force
                     </a>
+                    <a class="tsp" href="solveByRandom/${activeProblem.name}">
+                        Random
+                    </a>
+                    <g:if test="${optimalPath}">
+                        ${optimalPath}
+                    </g:if>
                 </div>
                 <canvas id="map" width="800" height="600"/>
                 <g:javascript src="TSP.js"/>

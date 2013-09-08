@@ -4,6 +4,7 @@ class UrlMappings {
 
 		"/"(controller: "tsp")
 		"/load/$tspName"(controller: "tsp", action: "load")
-		"/solve/$tspName"(controller: "tsp", action: "solve")
+		"/solveByForce/$tspName"(controller: "tsp", action: "solveByForce")
+		"/solveByRandom/$tspName"(controller: "tsp", action: "solveByRandom")
 	}
 }
