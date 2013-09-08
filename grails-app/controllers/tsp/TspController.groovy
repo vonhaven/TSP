@@ -9,8 +9,15 @@ class TspController {
         [tsps: tsps, activeProblem: activeProblem]  
     }
 
-    def loadProblem() {
-        def tsps = TSP.findAll()
+    def load() {
+        def tspName = params.tspName
+        if (tspName != null) {
+            activeProblem = TSP.findByName(tspName)
+        }
+        redirect(controller: "tsp", action: "index")
+    }
+
+    def solve() {
         def tspName = params.tspName
         if (tspName != null) {
             activeProblem = TSP.findByName(tspName)

@@ -19,6 +19,7 @@ class TSP
         @drawLine x[i], x[i + 1], y[i], y[i + 1], i
       else
         @drawLine x[i], x[0], y[i], y[0], i
+    for i in [0..(@dimension - 1)]
       @drawNode x[i], y[i], i
 
   drawNode: (x, y, i) ->
@@ -34,7 +35,7 @@ class TSP
     @context.fillText "#{i + 1}", @convertX(x) - 4.5, @convertY(y) - 13
 
   drawLine: (x1, x2, y1, y2, i) ->
-    @context.strokeStyle = "#aaa"
+    @context.strokeStyle = "#bbb"
     @context.moveTo @convertX(x1), @convertY(y1)
     @context.lineTo @convertX(x2), @convertY(y2)
     @context.stroke()

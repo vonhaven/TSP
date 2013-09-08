@@ -12,6 +12,11 @@ class ProblemService {
         }
     }
 
+    private String solveByForce(TSP tsp) {
+        def xs = tsp.x.split()
+        def ys = tsp.y.split()
+    }
+
     private void constructFromFile(File file) {
         String name
         String comment = ""

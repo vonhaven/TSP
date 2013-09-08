@@ -18,7 +18,7 @@
     TSP.prototype.context = null;
 
     function TSP(name, comment, dimension, x, y) {
-      var i, _ref;
+      var i, _ref, _ref2;
       this.name = name;
       this.comment = comment;
       this.dimension = dimension;
@@ -34,6 +34,8 @@
         } else {
           this.drawLine(x[i], x[0], y[i], y[0], i);
         }
+      }
+      for (i = 0, _ref2 = this.dimension - 1; 0 <= _ref2 ? i <= _ref2 : i >= _ref2; 0 <= _ref2 ? i++ : i--) {
         this.drawNode(x[i], y[i], i);
       }
     }
@@ -52,7 +54,7 @@
     };
 
     TSP.prototype.drawLine = function(x1, x2, y1, y2, i) {
-      this.context.strokeStyle = "#aaa";
+      this.context.strokeStyle = "#bbb";
       this.context.moveTo(this.convertX(x1), this.convertY(y1));
       this.context.lineTo(this.convertX(x2), this.convertY(y2));
       return this.context.stroke();
