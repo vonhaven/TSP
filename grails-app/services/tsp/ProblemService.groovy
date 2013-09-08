@@ -2,6 +2,7 @@ package tsp
 
 class ProblemService {
 
+    /** Call to construct all TSP files in src/tsp */
     def construct() {
         File tspDir = new File("src/tsp/")
         assert tspDir.exists()
@@ -12,11 +13,46 @@ class ProblemService {
         }
     }
 
-    private String solveByForce(TSP tsp) {
-        def xs = tsp.x.split()
-        def ys = tsp.y.split()
+    /** Solves the TSP by brute force, returning a String
+        of node indexes in order of shortest calculated path */
+    def solveByForce(TSP tsp) {
+        List<String> xs = tsp.x.split()
+        List<String> ys = tsp.y.split()
+        assert xs.size() == ys.size()
+
+        List<float> xf = []
+        List<float> yf = []
+        xs.each() {
+            xf += it.toFloat()  
+        }
+        ys.each() {
+            yf += it.toFloat()
+        }
+        assert xf.size() == yf.size()
+
+        new BruteForceSolver(xf, yf)
+        permutate(remaining)
     }
 
+    private String permutate(List<int> remainingNode) {
+        if (remainingNodes.size() == 0) {
+             
+        }
+        else {
+            reducedList.each() { node ->
+                List<int> reducedList = remainingNodes.clone()
+                reducedList.remove(node)
+                permutate(reducedList)
+            } 
+        }
+    }
+    
+    private float getDistanceBetweenNodes(String node1, String node2) {
+        
+    }
+
+    /** Turns a randomly generated TSP file into a TSP file
+        to be stored in this database and loaded into the browser */
     private void constructFromFile(File file) {
         String name
         String comment = ""
