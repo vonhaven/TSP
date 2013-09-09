@@ -7,35 +7,44 @@
 
     TSP.prototype.comment = null;
 
-    TSP.prototype.dimension = null;
-
     TSP.prototype.x = null;
 
     TSP.prototype.y = null;
+
+    TSP.prototype.path = null;
 
     TSP.prototype.canvas = null;
 
     TSP.prototype.context = null;
 
-    function TSP(name, comment, dimension, x, y) {
-      var i, _ref, _ref2;
+    function TSP(name, comment, x, y, path) {
+      var i, pathStrings, string, _i, _len, _ref, _ref2;
       this.name = name;
       this.comment = comment;
-      this.dimension = dimension;
       this.x = x;
       this.y = y;
+      this.path = path;
       x = this.x.split(",");
       y = this.y.split(",");
       this.canvas = document.getElementById('map');
       this.context = this.canvas.getContext('2d');
-      for (i = 0, _ref = this.dimension - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
-        if (i < (this.dimension - 1)) {
-          this.drawLine(x[i], x[i + 1], y[i], y[i + 1], i);
-        } else {
-          this.drawLine(x[i], x[0], y[i], y[0], i);
+      if (this.path) {
+        pathStrings = this.path.replace("[", "").replace("]", "").replace(/\s+/g, ' ').split(",");
+        path = [];
+        for (_i = 0, _len = pathStrings.length; _i < _len; _i++) {
+          string = pathStrings[_i];
+          path += parseInt(string, 10);
+        }
+        console.log("Path List: " + path);
+        for (i = 0, _ref = path.length - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+          if (path[i] === path[path.length - 1]) {
+            this.drawLine(x[path[i]], x[path[0]], y[path[i]], y[path[0]]);
+          } else {
+            this.drawLine(x[path[i]], x[path[i + 1]], y[path[i]], y[path[i + 1]]);
+          }
         }
       }
-      for (i = 0, _ref2 = this.dimension - 1; 0 <= _ref2 ? i <= _ref2 : i >= _ref2; 0 <= _ref2 ? i++ : i--) {
+      for (i = 0, _ref2 = x.length; 0 <= _ref2 ? i <= _ref2 : i >= _ref2; 0 <= _ref2 ? i++ : i--) {
         this.drawNode(x[i], y[i], i);
       }
     }
@@ -50,10 +59,10 @@
       this.context.stroke();
       this.context.fillStyle = "#555";
       this.context.font = "14px Courier New";
-      return this.context.fillText("" + (i + 1), this.convertX(x) - 4.5, this.convertY(y) - 13);
+      return this.context.fillText("" + i, this.convertX(x) - 4.5, this.convertY(y) - 13);
     };
 
-    TSP.prototype.drawLine = function(x1, x2, y1, y2, i) {
+    TSP.prototype.drawLine = function(x1, x2, y1, y2) {
       this.context.strokeStyle = "#bbb";
       this.context.moveTo(this.convertX(x1), this.convertY(y1));
       this.context.lineTo(this.convertX(x2), this.convertY(y2));

@@ -13,6 +13,13 @@ class ProblemService {
         }
     }
 
+    /** Gets the default path of a TSP, where indices are ordered
+        by the order in which they are listed in the TSP file */
+    def getDefaultPath(TSP tsp) {
+        def nodes = tsp.getNodes()
+        return new TSPSolver(nodes.xf, nodes.yf).getDefaultPath()
+    }
+
     /** Solves the TSP by brute force, returning a String
         of node indices in order of shortest calculated path */
     def solveByForce(TSP tsp) {

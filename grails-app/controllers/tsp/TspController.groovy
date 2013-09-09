@@ -5,22 +5,40 @@ class TspController {
     def problemService
 
     static def activeProblem
-    static def optimalPath
+    static def path
 
     def index() {
         def tsps = TSP.findAll()
         return [
             tsps: tsps, 
             activeProblem: activeProblem,
-            optimalPath: optimalPath
+            path: path
         ]  
     }
 
     def load() {
         def tspName = params.tspName
         if (tspName != null) {
-            optimalPath = null
             activeProblem = TSP.findByName(tspName)
+            path = null
+            redirect(controller: "tsp", action: "index")
+        }
+        else {
+            redirect(view: "error")
+        }
+    }
+
+    def reset() {
+        activeProblem = null
+        path = null
+        redirect(controller: "tsp", action: "index")
+    }
+
+    def getDefaultPath() {
+        def tspName = params.tspName
+        if (tspName != null) {
+            activeProblem = TSP.findByName(tspName)
+            path = problemService.getDefaultPath(activeProblem)
             redirect(controller: "tsp", action: "index")
         }
         else {
@@ -32,7 +50,7 @@ class TspController {
         def tspName = params.tspName
         if (tspName != null) {
             activeProblem = TSP.findByName(tspName)
-            optimalPath = problemService.solveByForce(activeProblem)
+            path = problemService.solveByForce(activeProblem)
             redirect(controller: "tsp", action: "index")
         }
         else {
@@ -44,7 +62,7 @@ class TspController {
         def tspName = params.tspName
         if (tspName != null) {
             activeProblem = TSP.findByName(tspName)
-            optimalPath = problemService.solveByRandom(activeProblem)
+            path = problemService.solveByRandom(activeProblem)
             redirect(controller: "tsp", action: "index")
         }
         else {

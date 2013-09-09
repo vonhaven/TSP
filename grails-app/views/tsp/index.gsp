@@ -7,15 +7,12 @@
 	<body>
         <div id="main">
             <div class="title">
-                The Traveling Salesman Problem
+                <a href="reset">
+                    The Traveling Salesman Problem
+                </a>
                 <div class="subtitle">
                     by Nicholas Harshfield | CECS-545 | Fall 2013
                 </div>
-            </div>
-            <div class="content">
-                <a class="subtitle" href="reset">
-                    I. Brute Force / Random Solutions
-                </a>
             </div>
             <div class="content">
                 <g:each var="tsp" in="${tsps}">
@@ -26,9 +23,8 @@
             </div>
             <g:if test="${activeProblem}">
                 <div class="content">
-                    <span class="bigger red">File</span>${activeProblem.name}<br/>
-                    <span class="bigger green">Comments</span>${activeProblem.comment}<br/>
-                    <span class="bigger blue">Dimension</span>${activeProblem.dimension} nodes
+                    <span class="bigger blue">File</span>${activeProblem.name}<br/>
+                    <span class="bigger green">Dimension</span>${activeProblem.dimension} nodes
                 </div>
                 <div class="content">
                     <a class="tsp" href="solveByForce/${activeProblem.name}">
@@ -37,8 +33,8 @@
                     <a class="tsp" href="solveByRandom/${activeProblem.name}">
                         Random
                     </a>
-                    <g:if test="${optimalPath}">
-                        ${optimalPath}
+                    <g:if test="${path}">
+                        ${path}
                     </g:if>
                 </div>
                 <canvas id="map" width="800" height="600"/>
@@ -47,9 +43,9 @@
                     var tsp = new TSP(
                         "${activeProblem.name}", 
                         "${activeProblem.comment}", 
-                        "${activeProblem.dimension}", 
                         "${activeProblem.x}", 
-                        "${activeProblem.y}"
+                        "${activeProblem.y}",
+                        "${path}" 
                     );
                 </script>
             </g:if>

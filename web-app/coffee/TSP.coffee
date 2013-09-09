@@ -2,24 +2,30 @@
 class TSP
   name: null
   comment: null
-  dimension: null
   x: null
   y: null
+  path: null
   canvas: null
   context: null
   
   #construct TSP from GSP JSON
-  constructor: (@name, @comment, @dimension, @x, @y) ->
+  constructor: (@name, @comment, @x, @y, @path) ->
     x = @x.split ","
     y = @y.split ","
     @canvas = document.getElementById 'map'
     @context = @canvas.getContext '2d'
-    for i in [0..(@dimension - 1)]
-      if i < (@dimension - 1)
-        @drawLine x[i], x[i + 1], y[i], y[i + 1], i
-      else
-        @drawLine x[i], x[0], y[i], y[0], i
-    for i in [0..(@dimension - 1)]
+    if @path
+      pathStrings = @path.replace("[", "").replace("]", "").replace(/\s+/g, ' ').split ","
+      path = []
+      for string in pathStrings
+        path += parseInt string, 10
+      console.log "Path List: #{path}"
+      for i in [0..path.length - 1]
+        if path[i] == path[path.length - 1]
+          @drawLine x[path[i]], x[path[0]], y[path[i]], y[path[0]]
+        else
+          @drawLine x[path[i]], x[path[i+1]], y[path[i]], y[path[i + 1]]
+    for i in [0..(x.length)]
       @drawNode x[i], y[i], i
 
   drawNode: (x, y, i) ->
@@ -32,9 +38,9 @@ class TSP
     @context.stroke()
     @context.fillStyle= "#555"
     @context.font = "14px Courier New"
-    @context.fillText "#{i + 1}", @convertX(x) - 4.5, @convertY(y) - 13
+    @context.fillText "#{i}", @convertX(x) - 4.5, @convertY(y) - 13
 
-  drawLine: (x1, x2, y1, y2, i) ->
+  drawLine: (x1, x2, y1, y2) ->
     @context.strokeStyle = "#bbb"
     @context.moveTo @convertX(x1), @convertY(y1)
     @context.lineTo @convertX(x2), @convertY(y2)
