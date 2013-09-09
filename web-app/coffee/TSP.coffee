@@ -7,6 +7,20 @@ class TSP
   path: null
   canvas: null
   context: null
+  colors: [
+    "#dcc",
+    "#cdc",
+    "#ccd",
+    "#ddc",
+    "#cdd",
+    "#dcd",
+    "#ecc",
+    "#cec",
+    "#cce",
+    "#cde",
+    "#ecd",
+    "#dec"
+  ]
   
   #construct TSP from GSP JSON
   constructor: (@name, @comment, @x, @y, @path) ->
@@ -15,10 +29,7 @@ class TSP
     @canvas = document.getElementById 'map'
     @context = @canvas.getContext '2d'
     if @path
-      pathStrings = @path.replace("[", "").replace("]", "").replace(/\s+/g, ' ').split ","
-      path = []
-      for string in pathStrings
-        path += parseInt string, 10
+      path = @path.replace("[", "").replace("]", "").replace(/\s+/g, ' ').split ", "
       console.log "Path List: #{path}"
       for i in [0..path.length - 1]
         if path[i] == path[path.length - 1]
@@ -29,7 +40,7 @@ class TSP
       @drawNode x[i], y[i], i
 
   drawNode: (x, y, i) ->
-    @context.fillStyle= "#ddd"
+    @context.fillStyle = @colors[i]
     @context.strokeStyle = "#555"
     @context.beginPath()
     @context.arc @convertX(x), @convertY(y), 8, 0, 2 * Math.PI

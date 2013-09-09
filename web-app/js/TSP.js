@@ -17,8 +17,10 @@
 
     TSP.prototype.context = null;
 
+    TSP.prototype.colors = ["#dcc", "#cdc", "#ccd", "#ddc", "#cdd", "#dcd", "#ecc", "#cec", "#cce", "#cde", "#ecd", "#dec"];
+
     function TSP(name, comment, x, y, path) {
-      var i, pathStrings, string, _i, _len, _ref, _ref2;
+      var i, _ref, _ref2;
       this.name = name;
       this.comment = comment;
       this.x = x;
@@ -29,12 +31,7 @@
       this.canvas = document.getElementById('map');
       this.context = this.canvas.getContext('2d');
       if (this.path) {
-        pathStrings = this.path.replace("[", "").replace("]", "").replace(/\s+/g, ' ').split(",");
-        path = [];
-        for (_i = 0, _len = pathStrings.length; _i < _len; _i++) {
-          string = pathStrings[_i];
-          path += parseInt(string, 10);
-        }
+        path = this.path.replace("[", "").replace("]", "").replace(/\s+/g, ' ').split(", ");
         console.log("Path List: " + path);
         for (i = 0, _ref = path.length - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
           if (path[i] === path[path.length - 1]) {
@@ -50,7 +47,7 @@
     }
 
     TSP.prototype.drawNode = function(x, y, i) {
-      this.context.fillStyle = "#ddd";
+      this.context.fillStyle = this.colors[i];
       this.context.strokeStyle = "#555";
       this.context.beginPath();
       this.context.arc(this.convertX(x), this.convertY(y), 8, 0, 2 * Math.PI);
