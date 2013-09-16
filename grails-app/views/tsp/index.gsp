@@ -14,24 +14,37 @@
                     by Nicholas Harshfield | CECS-545 | Fall 2013
                 </div>
             </div>
-            <div class="content">
-                <g:each var="tsp" in="${tsps}">
-                    <a class="tsp" href="load/${tsp.name}">
-                        ${tsp.name}
-                    </a>
-                </g:each>
+            <div class="content subtitle">
+                <a class="item" href="loadSet/random">
+                    I.&nbsp;&nbsp;&nbsp;Random Hamiltonian Cycle
+                </a>
+                <a class="item" href="loadSet/brute">
+                    II.&nbsp;&nbsp;Brute Force Best Hamiltonian Cycle
+                </a>
+                <a class="item" href="loadSet/bfs">
+                    III. Search Breadth-First for Shortest Path
+                </a>
+                <a class="item" href="loadSet/dfs">
+                    IV.&nbsp;&nbsp;Search Depth-First for Shortest Path
+                </a>
             </div>
+            <g:if test="${tsps}">
+                <div class="content">
+                    <g:each var="tsp" in="${tsps}">
+                        <a class="tsp" href="load/${tsp.id}">
+                            ${tsp.name}
+                        </a>
+                    </g:each>
+                </div>
+            </g:if>
             <g:if test="${activeProblem}">
                 <div class="content">
                     <span class="bigger blue">File</span>${activeProblem.name}<br/>
                     <span class="bigger green">Dimension</span>${activeProblem.dimension} nodes
                 </div>
                 <div class="content">
-                    <a class="tsp" href="solveByForce/${activeProblem.name}">
-                        Force
-                    </a>
-                    <a class="tsp" href="solveByRandom/${activeProblem.name}">
-                        Random
+                    <a class="tsp" href="solve/${activeProblem.id}">
+                        Solve
                     </a>
                     <g:if test="${path}">
                         ${path}

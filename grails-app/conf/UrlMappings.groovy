@@ -4,9 +4,9 @@ class UrlMappings {
 
 		"/"(controller: "tsp")
         "/reset"(controller: "tsp", action: "reset")
-		"/load/$tspName"(controller: "tsp", action: "load")
-		"/getDefaultPath/$tspName"(controller: "tsp", action: "getDefaultPath")
-		"/solveByForce/$tspName"(controller: "tsp", action: "solveByForce")
-		"/solveByRandom/$tspName"(controller: "tsp", action: "solveByRandom")
+		"/loadSet/$tspSet"(controller: "tsp", action: "loadSet")
+		"/load/$tspId"(controller: "tsp", action: "load")
+		"/solve/$tspId"(controller: "tsp", action: "solve")
+		"/getDefaultPath/$tspId"(controller: "tsp", action: "getDefaultPath")
 	}
 }

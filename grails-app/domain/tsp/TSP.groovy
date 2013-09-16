@@ -2,17 +2,21 @@ package tsp
 
 class TSP {
     String name
+    String set
     String comment
     int dimension
     String x
     String y
+    String paths
 
     static constraints = {
-        name blank: false, unique: true
+        name blank: false, unique: 'set'
+        set blank: false
         comment blank: false
         dimension size: 2..50 
         x blank: false
         y blank: false
+        paths nullable: true
     }
 
     /** Returns the x and y coordinate Stringsas two lists 

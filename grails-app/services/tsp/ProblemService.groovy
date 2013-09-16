@@ -2,47 +2,86 @@ package tsp
 
 class ProblemService {
 
-    /** Call to construct all TSP files in src/tsp */
+    /** Construct all TSP objects for all projects */
     def construct() {
-        File tspDir = new File("src/tsp/")
+        constructFromPath("src/tsp/1", "random")
+        constructFromPath("src/tsp/1", "brute")
+        constructFromPath("src/tsp/2", "bfs")
+        constructFromPath("src/tsp/2", "dfs")
+    }
+
+    /** Call to construct all TSP files in src/tsp */
+    private void constructFromPath(String path, String set) {
+        File tspDir = new File(path)
         assert tspDir.exists()
         assert tspDir.isDirectory()
         def tsps = tspDir.listFiles()
         tsps.each() { file ->
-            constructFromFile(file)
+            constructFromFile(file, set)
+        }
+    }
+
+    /** Solves the given TSP by the file's predermined method */
+    def solve(TSP tsp) {
+        switch (tsp.set) {
+            case "random":
+                return solveByRandom(tsp)
+            case "brute":
+                return solveByForce(tsp)
+            case "bfs":
+                return solveByBFS(tsp)
+            case "dfs":
+                return solveByDFS(tsp)
+            default:
+                return "Error determining solution method of TSP"
         }
     }
 
     /** Gets the default path of a TSP, where indices are ordered
         by the order in which they are listed in the TSP file */
-    def getDefaultPath(TSP tsp) {
+    private def getDefaultPath(TSP tsp) {
         def nodes = tsp.getNodes()
         return new TSPSolver(nodes.xf, nodes.yf).getDefaultPath()
     }
 
     /** Solves the TSP by brute force, returning a String
         of node indices in order of shortest calculated path */
-    def solveByForce(TSP tsp) {
+    private def solveByForce(TSP tsp) {
         def nodes = tsp.getNodes()
         return new TSPSolver(nodes.xf, nodes.yf).solveByForce()
     }
 
     /** Paths the TSP randomly, returning a String of node
         indices representing a random path through the TSP */
-    def solveByRandom(TSP tsp) {
+    private def solveByRandom(TSP tsp) {
         def nodes = tsp.getNodes()
         return new TSPSolver(nodes.xf, nodes.yf).solveByRandom()
     }
 
+    /** Paths the TSP by a breadth-first search for the
+        shortest path to the destination */
+    private def solveByBFS(TSP tsp) {
+        def nodes = tsp.getNodes()
+        return new TSPSolver(nodes.xf, nodes.yf, tsp.paths).solveByBFS()
+    }
+
+    /** Paths the TSP by a depth-first search for the
+        shortest path to the destination */
+    private def solveByDFS(TSP tsp) {
+        def nodes = tsp.getNodes()
+        return new TSPSolver(nodes.xf, nodes.yf, tsp.paths).solveByDFS()
+    }
+
     /** Turns a randomly generated TSP file into a TSP file
         to be stored in this database and loaded into the browser */
-    private void constructFromFile(File file) {
+    private void constructFromFile(File file, String set) {
         String name
         String comment = ""
         int dimension = 0
         int index = 0
         String x = ""
         String y = ""
+        String paths = ""
 
         final String typeHeader = "TYPE: "      
         final String nameHeader = "NAME: "      
@@ -51,7 +90,7 @@ class ProblemService {
         final String edgeWeightHeader = "EDGE_WEIGHT_TYPE: "      
         final String nodeHeader = "NODE_COORD_SECTION"      
 
-        file.getText().split("\n").each() { line ->
+        file.getText().tokenize("\n").each() { line ->
             if (line.startsWith(typeHeader)) {
                 assert line.replace(typeHeader, "").trim() == "TSP"
             }
@@ -59,24 +98,28 @@ class ProblemService {
                 assert line.replace(edgeWeightHeader, "").trim() == "EUC_2D"
             }
             else if (line.startsWith(nameHeader)) {
-                name = line.split(": ")[1].trim()
+                name = line.tokenize(": ")[1].trim()
             }
             else if (line.startsWith(commentHeader)) {
-                comment += line.split(": ")[1].trim() + " "
+                comment += line.tokenize(": ")[1].trim() + " "
             }
             else if (line.startsWith(dimensionHeader)) {
-                dimension = line.split(": ")[1].trim().toInteger()
+                dimension = line.tokenize(": ")[1].trim().toInteger()
             }
             else if (line.startsWith(nodeHeader)) {
                 assert dimension >= 2
             }
             else if (line.startsWith(String.format("%s ", (index + 1)))) {
-                def coords = line.split(" ")
-                assert coords.size() == 3
+                List<String> coords = line.split()
+                assert coords.size() == 3 || coords.size() == 4
                 assert coords[0].toInteger() == index + 1
                 if (index > 0) {
                     x += ","
                     y += ","
+                    paths += "."
+                }
+                if (coords.size() == 4) {
+                    paths += coords[3].trim()
                 }
                 x += coords[1].trim()
                 y += coords[2].trim()
@@ -88,12 +131,14 @@ class ProblemService {
         }    
         def tsp = new TSP(
             name: name,
+            set: set,
             comment: comment.trim(),
             dimension: dimension,
             x: x,
-            y: y
+            y: y,
+            paths: paths
         )
         tsp.save(flush: true, failOnError: true)
-        println String.format(" --> TSP created from file: %s [%s] - %s", tsp.name, tsp.dimension, tsp.comment)
+        println String.format(" --> TSP for %s created from file: %s [%s]", tsp.set, tsp.name, tsp.dimension)
     }
 }
