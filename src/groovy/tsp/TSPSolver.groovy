@@ -43,7 +43,6 @@ class TSPSolver {
     public def solveByRandom() {
         println "Randomly solving: ${nodeList}"
         Collections.shuffle(nodeList)
-        println "Done!"
         return nodeList
     }
 
@@ -52,7 +51,6 @@ class TSPSolver {
     public def solveByForce() {
         println "Brute Force solving: ${nodeList}"
         permHamiltonianCycle(nodeList) 
-        println "Done!"
         return runningShortestPath
     }
 
@@ -89,14 +87,13 @@ class TSPSolver {
     public def solveByBFS() {
         println "Breadth-first solving: ${nodeList}"
         bfs(nodeList)
-        println "Done!"
         return runningShortestPath
     }
 
     /** Performs a breadth-first filtered permutation on a
         set of nodes with a pre-existing to/from path map */
     private void bfs(def nodeList) {
-        SynchronousQueue<BFS> queue = new SynchronousQueue()
+        /*SynchronousQueue<BFS> queue = new SynchronousQueue()
         def bfsList = []
         nodeList.each() { node ->
             bfsList.add(new BFS(node: node, marked: false, runningDistance: 0.0))
@@ -115,7 +112,7 @@ class TSPSolver {
                     }
                 }
             }
-        }
+        }*/
     }
 
     private class BFS {
@@ -143,7 +140,6 @@ class TSPSolver {
             }
         }
         else {
-            println " Testing for: ${nodeString} ... (${runningDistance})"
             paths[currentNode].each() { nextNode ->
                 if (!nodeString.contains(nextNode)) {
                     def increasedNodeString = nodeString.clone()

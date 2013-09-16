@@ -1,5 +1,7 @@
 package tsp
 
+import groovy.time.*
+
 class ProblemService {
 
     /** Construct all TSP objects for all projects */
@@ -23,18 +25,26 @@ class ProblemService {
 
     /** Solves the given TSP by the file's predermined method */
     def solve(TSP tsp) {
+        def timeStart = new Date()
         switch (tsp.set) {
             case "random":
-                return solveByRandom(tsp)
+                solveByRandom(tsp)
+                break
             case "brute":
-                return solveByForce(tsp)
+                solveByForce(tsp)
+                break
             case "bfs":
-                return solveByBFS(tsp)
+                solveByBFS(tsp)
+                break
             case "dfs":
-                return solveByDFS(tsp)
+                solveByDFS(tsp)
+                break
             default:
                 return "Error determining solution method of TSP"
         }
+        def timeStop = new Date()
+        TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
+        println "Done! Finished in: ${duration}"
     }
 
     /** Gets the default path of a TSP, where indices are ordered
