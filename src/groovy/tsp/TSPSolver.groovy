@@ -29,7 +29,6 @@ class TSPSolver {
                 paths.add(path)
             }
         }
-        println paths
     }
 
     /** Gets the default path, ordered by the index of the
@@ -83,6 +82,38 @@ class TSPSolver {
         return Math.sqrt((distX * distX) + (distY * distY))
     }
 
+    /** Finds a depth-first search solution to the given TSP */
+    public def solveByDFS() {
+        println "Depth-first solving: ${nodeList}"
+        return dfs(nodeList)
+    }
+
+    /** Performs a depth-first filtered permutation on a
+        set of nodes with a pre-existing to/from path map,
+        and returns the first path found */
+    private def dfs(def nodeList) {
+        def q = [0] as Queue
+        while (!q.isEmpty()) {
+            int n = q.poll()
+            if (n == nodeList.size() - 1) {
+                def finalList = []
+                nodeList.each() { node ->
+                    if (node <= 0) {
+                        finalList.add(node.abs())
+                    }
+                }
+                return finalList
+            }
+            paths[n].each() { node ->
+                if (nodeList[node] >= 0) {
+                    q << node
+                    nodeList[node] = -node
+                }
+            }
+        }
+        return null
+    }
+
     /** Finds a breadth-first search solution to the given TSP */
     public def solveByBFS() {
         println "Breadth-first solving: ${nodeList}"
@@ -91,47 +122,9 @@ class TSPSolver {
     }
 
     /** Performs a breadth-first filtered permutation on a
-        set of nodes with a pre-existing to/from path map */
-    private void bfs(def nodeList) {
-        /*SynchronousQueue<BFS> queue = new SynchronousQueue()
-        def bfsList = []
-        nodeList.each() { node ->
-            bfsList.add(new BFS(node: node, marked: false, runningDistance: 0.0))
-        }
-        def bfs = bfsList[0]
-        queue.put(bfs)
-        while (!queue.isEmpty()) {
-            bfs = queue.pull()
-            if (bfs.node == nodeList[nodeList.size() - 1]) {
-                println " --> ${queue}: ${runningDistance}"
-                if (bfs.runningDistance < runningDistance || runningDistance < 0.0) {
-                    runningDistance = bfs.runningDistance
-                    runningShortestPath = []
-                    while (!queue.isEmpty()) {
-                        runningShortestPath.add(queue.pull())
-                    }
-                }
-            }
-        }*/
-    }
-
-    private class BFS {
-        int node
-        boolean marked
-        float runningDistance
-    }
-
-    /** Finds a depth-first search solution to the given TSP */
-    public def solveByDFS() {
-        println "Depth-first solving: ${nodeList}"
-        dfs(nodeList, [0])
-        println "Done!"
-        return runningShortestPath
-    }
-
-    /** Performs a depth-first filtered permutation on a
-        set of nodes with a pre-existing to/from path map */
-    private void dfs(def nodeList, def nodeString = [], float runningDistance = 0.0, int currentNode = 0) {
+        set of nodes with a pre-existing to/from path map
+        and returns the first path found */
+    private void bfs(def nodeList, def nodeString = [0], float runningDistance = 0.0, int currentNode = 0) {
         if (currentNode == (nodeList.size() - 1)) {
             if (runningShortestDistance < 0.0 || runningDistance < runningShortestDistance) {
                 println " --> ${nodeString}: ${runningDistance}"
@@ -145,7 +138,7 @@ class TSPSolver {
                     def increasedNodeString = nodeString.clone()
                     increasedNodeString += nextNode
                     float distance = runningDistance + getDistanceBetweenNodes(currentNode, nextNode - 1)
-                    dfs(nodeList, increasedNodeString, distance, nextNode) 
+                    bfs(nodeList, increasedNodeString, distance, nextNode) 
                 }
             }
         }

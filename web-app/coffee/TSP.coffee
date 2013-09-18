@@ -49,7 +49,7 @@ class TSP
     @context.stroke()
     @context.fillStyle= "#555"
     @context.font = "14px Courier New"
-    @context.fillText "#{i}", @convertX(x) - 4.5, @convertY(y) - 13
+    @context.fillText "#{i + 1}", @convertX(x) - 4.5, @convertY(y) - 13
 
   drawLine: (x1, x2, y1, y2) ->
     @context.strokeStyle = "#bbb"

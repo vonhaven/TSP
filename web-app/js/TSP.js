@@ -56,7 +56,7 @@
       this.context.stroke();
       this.context.fillStyle = "#555";
       this.context.font = "14px Courier New";
-      return this.context.fillText("" + i, this.convertX(x) - 4.5, this.convertY(y) - 13);
+      return this.context.fillText("" + (i + 1), this.convertX(x) - 4.5, this.convertY(y) - 13);
     };
 
     TSP.prototype.drawLine = function(x1, x2, y1, y2) {

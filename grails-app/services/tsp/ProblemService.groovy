@@ -26,25 +26,28 @@ class ProblemService {
     /** Solves the given TSP by the file's predermined method */
     def solve(TSP tsp) {
         def timeStart = new Date()
+        def solution
         switch (tsp.set) {
             case "random":
-                solveByRandom(tsp)
+                solution = solveByRandom(tsp)
                 break
             case "brute":
-                solveByForce(tsp)
+                solution = solveByForce(tsp)
                 break
             case "bfs":
-                solveByBFS(tsp)
+                solution = solveByBFS(tsp)
                 break
             case "dfs":
-                solveByDFS(tsp)
+                solution = solveByDFS(tsp)
                 break
             default:
-                return "Error determining solution method of TSP"
+                solution = "Error determining solution method of TSP"
+                breal
         }
         def timeStop = new Date()
         TimeDuration duration = TimeCategory.minus(timeStop, timeStart)
-        println "Done! Finished in: ${duration}"
+        println "Done! Finished in: ${duration}. Solution: ${solution}"
+        return solution
     }
 
     /** Gets the default path of a TSP, where indices are ordered
