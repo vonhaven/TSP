@@ -10,6 +10,7 @@ class ProblemService {
         constructFromPath("src/tsp/1", "brute")
         constructFromPath("src/tsp/2", "bfs")
         constructFromPath("src/tsp/2", "dfs")
+        constructFromPath("src/tsp/3", "greed")
     }
 
     /** Call to construct all TSP files in src/tsp */
@@ -39,6 +40,9 @@ class ProblemService {
                 break
             case "dfs":
                 solution = solveByDFS(tsp)
+                break
+            case "greed":
+                solution = solveByGreed(tsp)
                 break
             default:
                 solution = "Error determining solution method of TSP"
@@ -83,6 +87,13 @@ class ProblemService {
     private def solveByDFS(TSP tsp) {
         def nodes = tsp.getNodes()
         return new TSPSolver(nodes.xf, nodes.yf, tsp.paths).solveByDFS()
+    }
+
+    /** Paths the TSP by a greedy heuristic search for
+        the best Hamiltonian path through the TSP */
+    private def solveByGreed(TSP tsp) {
+        def nodes = tsp.getNodes()
+        return new TSPSolver(nodes.xf, nodes.yf).solveByGreed()
     }
 
     /** Turns a randomly generated TSP file into a TSP file

@@ -40,7 +40,7 @@ class TSP
       @drawNode x[i], y[i], i
 
   drawNode: (x, y, i) ->
-    @context.fillStyle = @colors[i]
+    @context.fillStyle = @colors[i % @colors.length]
     @context.strokeStyle = "#555"
     @context.beginPath()
     @context.arc @convertX(x), @convertY(y), 8, 0, 2 * Math.PI

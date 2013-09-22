@@ -47,7 +47,7 @@
     }
 
     TSP.prototype.drawNode = function(x, y, i) {
-      this.context.fillStyle = this.colors[i];
+      this.context.fillStyle = this.colors[i % this.colors.length];
       this.context.strokeStyle = "#555";
       this.context.beginPath();
       this.context.arc(this.convertX(x), this.convertY(y), 8, 0, 2 * Math.PI);

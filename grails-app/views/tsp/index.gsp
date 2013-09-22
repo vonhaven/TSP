@@ -22,10 +22,13 @@
                     II.&nbsp;&nbsp;Brute Force Best Hamiltonian Cycle
                 </a>
                 <a class="item" href="loadSet/bfs">
-                    III. Search Breadth-First for Shortest Path
+                    III. Search Breadth-First for First Path
                 </a>
                 <a class="item" href="loadSet/dfs">
-                    IV.&nbsp;&nbsp;Search Depth-First for Shortest Path
+                    IV.&nbsp;&nbsp;Search Depth-First for First Path
+                </a>
+                <a class="item" href="loadSet/greed">
+                    V.&nbsp;&nbsp;&nbsp;Greedy Heuristic Search for Best Path
                 </a>
             </div>
             <g:if test="${tsps}">

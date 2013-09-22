@@ -79,7 +79,14 @@ class TSPSolver {
     private float getDistanceBetweenNodes(int index1, int index2) {
         float distX = xs[index2] - xs[index1]
         float distY = ys[index2] - ys[index1]
-        return Math.sqrt((distX * distX) + (distY * distY))
+        return Math.sqrt((distX * distX) + (distY * distY)).toFloat()
+    }
+    
+    /** Euclidian distance between two nodes, 'nuff said */ 
+    private float getDistanceBetweenPoints(float x1, float x2, float y1, float y2) {
+        float distX = x2 - x1
+        float distY = y2 - y1
+        return Math.sqrt((distX * distX) + (distY * distY)).toFloat()
     }
 
     /** Finds a depth-first search solution to the given TSP */
@@ -93,15 +100,19 @@ class TSPSolver {
         and returns the first path found */
     private def dfs(def nodeList) {
         def q = [0] as Queue
+        float runningDistance = 0.0
         while (!q.isEmpty()) {
             int n = q.poll()
             if (n == nodeList.size() - 1) {
                 def finalList = []
+                int prev = 0
                 nodeList.each() { node ->
                     if (node <= 0) {
                         finalList.add(node.abs())
+                        runningDistance += getDistanceBetweenNodes(prev, node.abs())
                     }
                 }
+                println " --> ${finalList}: ${runningDistance}"
                 return finalList
             }
             paths[n].each() { node ->
@@ -142,5 +153,95 @@ class TSPSolver {
                 }
             }
         }
+    }
+
+    /** Uses a greedy-heuristic approach to find the best
+        Hamiltonian path through the TSP */
+    public def solveByGreed() {
+        int newNode
+        def sortedNodes = []
+        float dist = 9000.0
+        println "Greedily solving: ${nodeList}"
+
+        //start with node closest to origin
+        nodeList.each() { node ->
+            float d = getDistanceBetweenPoints(0.0, xs[node], 0.0, ys[node])
+            if (d < dist) {
+                newNode = node
+                dist = d
+            }
+        }
+        sortedNodes.push(newNode)
+        nodeList = nodeList.minus(newNode)
+
+        //add next closest node
+        dist = 9000.0
+        nodeList.each() { node ->
+            float d = getDistanceBetweenPoints(0.0, xs[node], 0.0, ys[node])
+            if (d < dist) {
+                newNode = node
+                dist = d
+            }
+        }
+        sortedNodes.push(newNode)
+        nodeList = nodeList.minus(newNode)
+
+        //repeat processes for remaining nodes until none remain
+        while (!nodeList.isEmpty()) {
+            float runningDistance = getDistanceOfNodeList(sortedNodes)
+            println " --> Path: ${sortedNodes} --> Running Distance: ${runningDistance}"
+
+            //get next-closest node to origin
+            dist = 9000.0
+            nodeList.each() { node ->
+                float d = getDistanceBetweenPoints(0.0, xs[node], 0.0, ys[node])
+                if (d < dist) {
+                    newNode = node
+                    dist = d
+                }
+            }
+
+            //find the closest edge
+            dist = 9000.0
+            int edgeIndex = -1
+            for (int i=0; i<sortedNodes.size() - 1; i++) {
+                def edge = getEdgePoint(
+                    xs[sortedNodes[i]], 
+                    xs[sortedNodes[i + 1]], 
+                    ys[sortedNodes[i]], 
+                    ys[sortedNodes[i + 1]])
+                float d = getDistanceBetweenPoints(edge.x, xs[newNode], edge.y, ys[newNode])
+                if (d < dist) {
+                    edgeIndex = i 
+                    dist = d
+                }
+            }
+            if (edgeIndex < 0) {
+                throw new IllegalArgumentException("No edge was found. What the hell?")
+            }
+
+            //insert new node between nodes of found edge
+            sortedNodes = sortedNodes.plus(edgeIndex, [newNode])
+            nodeList = nodeList.minus(newNode)
+        }
+        return sortedNodes
+    }
+
+    /** Gets the center point of the edge that connects
+        two nodes */
+    private def getEdgePoint(float x1, float x2, float y1, float y2) {
+        return [
+            x: ((x1 + x2) / 2.0).toFloat(),
+            y: ((y1 + y2) / 2.0).toFloat()
+        ]
+    }
+
+    /** Gets the final distance of the given path of nodes */
+    private float getDistanceOfNodeList(def nodeList) {
+        float runningDistance = 0.0
+        for (int i=0; i<nodeList.size() - 1; i++) {
+            runningDistance += getDistanceBetweenNodes(nodeList[i], nodeList[i + 1])
+        }
+        return runningDistance
     }
 }

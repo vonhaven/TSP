@@ -14,9 +14,14 @@ class TSP {
         set blank: false
         comment blank: false
         dimension size: 2..50 
-        x blank: false
-        y blank: false
+        x blank: false, maxSize: 8192
+        y blank: false, maxSize: 8192
         paths nullable: true
+    }
+    
+    static mapping = {
+        x type: 'text'
+        y type: 'text'
     }
 
     /** Returns the x and y coordinate Stringsas two lists 
