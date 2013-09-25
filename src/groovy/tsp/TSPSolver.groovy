@@ -11,6 +11,16 @@ class TSPSolver {
     List<String> runningShortestPath = []
     float runningShortestDistance = -1.0
 
+    /** Various methods to solve the TSP */
+    enum SolutionMethod {
+        DEFAULT,
+        RANDOM,
+        FORCE,
+        BFS,
+        DFS,
+        GREED
+    }
+
     /** Construct a TSP solver for a two-dimensional system,
         requiring two lists of floating point numbers */
     public TSPSolver(def xs, def ys, def pathsString = "") {
@@ -31,34 +41,55 @@ class TSPSolver {
         }
     }
 
+    /** Solve the TSP according to a given method */
+    public def solve(SolutionMethod s) {
+        def solution
+        switch (s) {
+            case SolutionMethod.RANDOM:
+                solution = solveByRandom()
+            case SolutionMethod.FORCE:
+                solution = SolveByForce()
+            case SolutionMethod.BFS:
+                solution = solveByBFS()
+            case SolutionMethod.DFS:
+                solution = solveByDFS()
+            case SolutionMethod.GREED:
+                solution = solveByGreed()
+            default:
+                solution = getDefaultPath()
+        }
+        return solution
+    }
+
     /** Gets the default path, ordered by the index of the
         TSP's nodes listed in the TSP file */
-    public def getDefaultPath() {
+    private def getDefaultPath() {
         return nodeList
     }
     
     /** Returns a randomly generated Hamiltonian path through
         the TSP's set of nodes */
-    public def solveByRandom() {
+    private def solveByRandom() {
         println "Randomly solving: ${nodeList}"
         Collections.shuffle(nodeList)
-        return nodeList
+        return nodeList += nodeList[0]
     }
 
     /** Returns a path which represents the shortest possible
         Hamiltonian path between all permutations of nodes */
-    public def solveByForce() {
+    private def solveByForce() {
         println "Brute Force solving: ${nodeList}"
-        permHamiltonianCycle(nodeList) 
+        permHamiltonianCycle(nodeList.minus(0)) 
         return runningShortestPath
     }
 
     /** Generates all permutations of a set of nodes and keeps
         track of the shortest path and its distance */
-    private void permHamiltonianCycle(def remainingNodes, def nodeString = [], float runningDistance = 0.0, int currentNode = 0) {
+    private void permHamiltonianCycle(def remainingNodes, def nodeString = [0], float runningDistance = 0.0, int currentNode = 0) {
         if (remainingNodes.size() == 0) {
+            runningDistance += getDistanceBetweenNodes(currentNode, 0)
             if (runningShortestDistance < 0.0 || runningDistance < runningShortestDistance) {
-                //println " --> ${nodeString}: ${runningDistance}"
+                println " --> ${nodeString}: ${runningDistance}"
                 runningShortestDistance = runningDistance
                 runningShortestPath = nodeString
             }
@@ -90,7 +121,7 @@ class TSPSolver {
     }
 
     /** Finds a depth-first search solution to the given TSP */
-    public def solveByDFS() {
+    private def solveByDFS() {
         println "Depth-first solving: ${nodeList}"
         return dfs(nodeList)
     }
@@ -126,7 +157,7 @@ class TSPSolver {
     }
 
     /** Finds a breadth-first search solution to the given TSP */
-    public def solveByBFS() {
+    private def solveByBFS() {
         println "Breadth-first solving: ${nodeList}"
         bfs(nodeList)
         return runningShortestPath
@@ -157,7 +188,7 @@ class TSPSolver {
 
     /** Uses a greedy-heuristic approach to find the best
         Hamiltonian path through the TSP */
-    public def solveByGreed() {
+    private def solveByGreed() {
         int newNode
         def sortedNodes = []
         float dist = 9000.0
