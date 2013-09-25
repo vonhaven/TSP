@@ -58,7 +58,7 @@ class TSPSolver {
     private void permHamiltonianCycle(def remainingNodes, def nodeString = [], float runningDistance = 0.0, int currentNode = 0) {
         if (remainingNodes.size() == 0) {
             if (runningShortestDistance < 0.0 || runningDistance < runningShortestDistance) {
-                println " --> ${nodeString}: ${runningDistance}"
+                //println " --> ${nodeString}: ${runningDistance}"
                 runningShortestDistance = runningDistance
                 runningShortestPath = nodeString
             }
@@ -221,7 +221,12 @@ class TSPSolver {
             }
 
             //insert new node between nodes of found edge
-            sortedNodes = sortedNodes.plus(edgeIndex, [newNode])
+            sortedNodes = sortedNodes.plus(edgeIndex + 1, [newNode])
+            runningShortestDistance = -1.0
+            permHamiltonianCycle([sortedNodes[edgeIndex], sortedNodes[edgeIndex + 1], sortedNodes[edgeIndex + 2]])
+            sortedNodes[edgeIndex] = runningShortestPath[0]
+            sortedNodes[edgeIndex + 1] = runningShortestPath[1]
+            sortedNodes[edgeIndex + 2] = runningShortestPath[2]
             nodeList = nodeList.minus(newNode)
         }
         return sortedNodes
