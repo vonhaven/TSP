@@ -89,7 +89,7 @@ class TSPSolver {
         if (remainingNodes.size() == 0) {
             runningDistance += getDistanceBetweenNodes(currentNode, 0)
             if (runningShortestDistance < 0.0 || runningDistance < runningShortestDistance) {
-                println " --> ${nodeString}: ${runningDistance}"
+                //println " --> ${nodeString}: ${runningDistance}"
                 runningShortestDistance = runningDistance
                 runningShortestPath = nodeString
             }
@@ -220,7 +220,7 @@ class TSPSolver {
         //repeat processes for remaining nodes until none remain
         while (!nodeList.isEmpty()) {
             float runningDistance = getDistanceOfNodeList(sortedNodes)
-            println " --> Path: ${sortedNodes} --> Running Distance: ${runningDistance}"
+            println " --> +[${newNode}] = ${sortedNodes}, d=${runningDistance}"
 
             //get next-closest node to origin
             dist = 9000.0
@@ -252,9 +252,19 @@ class TSPSolver {
             }
 
             //insert new node between nodes of found edge
-            sortedNodes = sortedNodes.plus(edgeIndex, [newNode])
+            sortedNodes = sortedNodes.plus(edgeIndex + 1, [newNode])
+            /*runningShortestDistance = -1.0
+            permHamiltonianCycle([sortedNodes[edgeIndex], sortedNodes[edgeIndex + 1], sortedNodes[edgeIndex + 2]], [])
+            sortedNodes[edgeIndex] = runningShortestPath[0]
+            sortedNodes[edgeIndex + 1] = runningShortestPath[1]
+            sortedNodes[edgeIndex + 2] = runningShortestPath[2]*/
             nodeList = nodeList.minus(newNode)
         }
+
+        //calculate final jump
+        //sortedNodes += [sortedNodes[0]]
+        float runningDistance = getDistanceOfNodeList(sortedNodes)
+        println " --> Returning to first node: ${sortedNodes} --> Running Distance: ${runningDistance}"
         return sortedNodes
     }
 
