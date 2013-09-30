@@ -252,12 +252,7 @@ class TSPSolver {
             }
 
             //insert new node between nodes of found edge
-            sortedNodes = sortedNodes.plus(edgeIndex + 1, [newNode])
-            runningShortestDistance = -1.0
-            permHamiltonianCycle([sortedNodes[edgeIndex], sortedNodes[edgeIndex + 1], sortedNodes[edgeIndex + 2]])
-            sortedNodes[edgeIndex] = runningShortestPath[0]
-            sortedNodes[edgeIndex + 1] = runningShortestPath[1]
-            sortedNodes[edgeIndex + 2] = runningShortestPath[2]
+            sortedNodes = sortedNodes.plus(edgeIndex, [newNode])
             nodeList = nodeList.minus(newNode)
         }
         return sortedNodes
