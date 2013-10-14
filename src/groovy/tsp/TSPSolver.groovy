@@ -1,5 +1,7 @@
 package tsp
 
+import java.util.Random
+
 /** A class which provides a variety of methods to solve the
     Traveling Salesman Problem */
 class TSPSolver {
@@ -10,16 +12,6 @@ class TSPSolver {
     int originalSize
     List<String> runningShortestPath = []
     float runningShortestDistance = -1.0
-
-    /** Various methods to solve the TSP */
-    enum SolutionMethod {
-        DEFAULT,
-        RANDOM,
-        FORCE,
-        BFS,
-        DFS,
-        GREED
-    }
 
     /** Construct a TSP solver for a two-dimensional system,
         requiring two lists of floating point numbers */
@@ -39,26 +31,6 @@ class TSPSolver {
                 paths.add(path)
             }
         }
-    }
-
-    /** Solve the TSP according to a given method */
-    public def solve(SolutionMethod s) {
-        def solution
-        switch (s) {
-            case SolutionMethod.RANDOM:
-                solution = solveByRandom()
-            case SolutionMethod.FORCE:
-                solution = SolveByForce()
-            case SolutionMethod.BFS:
-                solution = solveByBFS()
-            case SolutionMethod.DFS:
-                solution = solveByDFS()
-            case SolutionMethod.GREED:
-                solution = solveByGreed()
-            default:
-                solution = getDefaultPath()
-        }
-        return solution
     }
 
     /** Gets the default path, ordered by the index of the
@@ -284,5 +256,120 @@ class TSPSolver {
             runningDistance += getDistanceBetweenNodes(nodeList[i], nodeList[i + 1])
         }
         return runningDistance
+    }
+
+    /** Gets the final distance of the given path of nodes */
+    private float getDistanceOfHamiltonianPath(def nodeList) {
+        float runningDistance = 0.0
+        for (int i=0; i<nodeList.size() - 1; i++) {
+            runningDistance += getDistanceBetweenNodes(nodeList[i], nodeList[i + 1])
+        }
+        runningDistance += getDistanceBetweenNodes(nodeList[0], nodeList[nodeList.size() - 1])
+        return runningDistance
+    }
+
+    /** Returns a randomly generated Hamiltonian path through
+        the TSP's set of nodes */
+    private def solveByGA(int generations, int populationSize, int mutationFactor) {
+        //let's get started
+        println "Using genetics to solve: ${nodeList}"
+        Random rand = new Random()
+
+        //track population and ratings
+        def population = []
+        def fitness = []
+        
+        //initialize parents
+        def daddy = []
+        float daddyFitness
+        def mommy = []
+        float mommyFitness
+        
+        //initialize child
+        def child = []
+        float childFitness
+        
+        //initialize fitness comparator function
+        def cmp = [compare: {a, b -> a.equals(b) ? 0: a<b ? -1: 1}] as Comparator
+        println "Population size: ${populationSize}"
+        println "Mutation Factor: ${mutationFactor}"
+        println "Generations: ${generations}"
+
+        //initialize a population randomly and calculate fitnesses
+        for (int i=0; i<populationSize; i++) {
+            population[i] = nodeList.clone()
+            Collections.shuffle(population[i])
+            //evaluate fitness of path
+            fitness[i] = getDistanceOfHamiltonianPath(population[i])
+        }
+
+        //until generation criteria is satisfied
+        for (int i=0; i<generations; i++) {
+            //select the best of the population as daddy
+            daddyFitness = fitness.min(cmp)
+            daddy = population[fitness.indexOf(daddyFitness)]
+            fitness = fitness.minus(daddyFitness)
+            
+            //select the next-best of the population as mommy
+            mommyFitness = fitness.min(cmp)
+            mommy = population[fitness.indexOf(mommyFitness)]
+            fitness = fitness.minus(mommyFitness)
+
+            //ensure that no nodes were lost in the selection
+            assert daddy.size() == nodeList.size()
+            assert mommy.size() == nodeList.size()
+
+            //produce a child from the parent set
+            child = []
+            //1. take the first half of jumps from dad's first half
+            for (int j=0; j<daddy.size() / 2; j++) {
+                child += daddy[j]
+            }
+            //2. take the remaining nodes in order as they appear in mommy
+            int c = 0;
+            while (child.size() < daddy.size()) {
+                if (!child.contains(mommy[c])) {
+                    child += mommy[c]
+                }
+                c++;
+            }
+            //ensure that no nodes were lost in the reproduction
+            assert child.size() == nodeList.size()
+            println " --> child[${i}]: ${daddyFitness}"
+            childFitness = getDistanceOfHamiltonianPath(child)
+
+            //create new population from parents, child, and mutations of the child
+            //1. clear old populations and fitnesses
+            population.clear()
+            fitness.clear()
+            //2. add parents and child manually to next population
+            population += [daddy]
+            fitness += daddyFitness
+            population += [mommy]
+            fitness += mommyFitness
+            population += [child]
+            fitness += childFitness
+            //3. finish population with mutations of child
+            for (int j=3; j<populationSize; j++) {
+                //carbon copy the child, optimal or not
+                population[j] = child.clone()
+
+                //mutate! swap some cells at random
+                for (int k=0; k<mutationFactor; k++) {
+                    Collections.swap(population[j], rand.nextInt(child.size()), rand.nextInt(child.size()))
+                }
+                fitness[j] = getDistanceOfHamiltonianPath(population[j])
+            }
+        }
+        
+        //return the father as the best path, unless the child is fitter
+        if (daddyFitness < childFitness) {
+            println " --> Final parent distance (fitness): ${daddyFitness}"
+            return daddy += daddy[0]
+        }
+        else {
+            println " --> Final child distance (fitness): ${childFitness}"
+            return child += child[0]
+        }
     }
 }

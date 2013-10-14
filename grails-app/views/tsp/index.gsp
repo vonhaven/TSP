@@ -16,19 +16,22 @@
             </div>
             <div class="content subtitle">
                 <a class="item" href="loadSet/random">
-                    I.&nbsp;&nbsp;&nbsp;Random Hamiltonian Cycle
+                    I.&nbsp;&nbsp;&nbsp;Random
                 </a>
                 <a class="item" href="loadSet/brute">
-                    II.&nbsp;&nbsp;Brute Force Best Hamiltonian Cycle
+                    II.&nbsp;&nbsp;Brute Force
                 </a>
                 <a class="item" href="loadSet/bfs">
-                    III. Search Breadth-First for First Path
+                    III. Breadth-First Search
                 </a>
                 <a class="item" href="loadSet/dfs">
-                    IV.&nbsp;&nbsp;Search Depth-First for First Path
+                    IV.&nbsp;&nbsp;Depth-First Search
                 </a>
                 <a class="item" href="loadSet/greed">
-                    V.&nbsp;&nbsp;&nbsp;Greedy Heuristic Search for Best Path
+                    V.&nbsp;&nbsp;&nbsp;Greedy Heuristic
+                </a>
+                <a class="item" href="loadSet/genetic">
+                    VI.&nbsp;&nbsp;Genetic Algorithm
                 </a>
             </div>
             <g:if test="${tsps}">
@@ -42,15 +45,42 @@
             </g:if>
             <g:if test="${activeProblem}">
                 <div class="content">
-                    <span class="bigger blue">File</span>${activeProblem.name}<br/>
-                    <span class="bigger green">Dimension</span>${activeProblem.dimension} nodes
+                    <span class="bigger blue">
+                        File
+                    </span>
+                    ${activeProblem.name}
+                    <br/>
+                    <span class="bigger green">
+                        Dimension
+                    </span>
+                    ${activeProblem.dimension} nodes
+                    <br/>
+                    <g:if test="${tspSet == 'genetic'}">
+                        <span class="bigger">
+                            Generations
+                        </span>
+                        ${generations}
+                        <br/>
+                        <span class="bigger red">
+                            Options
+                        </span>
+                        <a class="generation" href="setGenerations/1">1</a>
+                        <a class="generation" href="setGenerations/5">5</a>
+                        <a class="generation" href="setGenerations/25">25</a>
+                        <a class="generation" href="setGenerations/100">100</a>
+                        <a class="generation" href="setGenerations/250">250</a>
+                        <a class="generation" href="setGenerations/500">500</a>
+                        <a class="generation" href="setGenerations/1000">1k</a>
+                        <a class="generation" href="setGenerations/2000">2k</a>
+                        <a class="generation" href="setGenerations/5000">5k</a>
+                    </g:if>
                 </div>
                 <div class="content">
                     <a class="tsp" href="solve/${activeProblem.id}">
                         Solve
                     </a>
                     <g:if test="${path}">
-                        ${path}
+                        ${prettyPath}
                     </g:if>
                 </div>
                 <canvas id="map" width="800" height="600"/>

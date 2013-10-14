@@ -11,6 +11,7 @@ class ProblemService {
         constructFromPath("src/tsp/2", "bfs")
         constructFromPath("src/tsp/2", "dfs")
         constructFromPath("src/tsp/3", "greed")
+        constructFromPath("src/tsp/4", "genetic")
     }
 
     /** Call to construct all TSP files in src/tsp */
@@ -25,7 +26,7 @@ class ProblemService {
     }
 
     /** Solves the given TSP by the file's predermined method */
-    def solve(TSP tsp) {
+    def solve(TSP tsp, def options) {
         def timeStart = new Date()
         def solution
         switch (tsp.set) {
@@ -43,6 +44,9 @@ class ProblemService {
                 break
             case "greed":
                 solution = solveByGreed(tsp)
+                break
+            case "genetic":
+                solution = solveByGA(tsp, options[0].toInteger(), options[1], options[2])
                 break
             default:
                 solution = "Error determining solution method of TSP"
@@ -94,6 +98,13 @@ class ProblemService {
     private def solveByGreed(TSP tsp) {
         def nodes = tsp.getNodes()
         return new TSPSolver(nodes.xf, nodes.yf).solveByGreed()
+    }
+
+    /** Paths the TSP by a greedy heuristic search for
+        the best Hamiltonian path through the TSP */
+    private def solveByGA(TSP tsp, int generations, int populationSize, int mutationFactor) {
+        def nodes = tsp.getNodes()
+        return new TSPSolver(nodes.xf, nodes.yf, tsp.paths).solveByGA(generations, populationSize, mutationFactor)
     }
 
     /** Turns a randomly generated TSP file into a TSP file
