@@ -272,8 +272,13 @@ class TSPSolver {
         the TSP's set of nodes */
     private def solveByGA(int generations, int populationSize, int mutationFactor) {
         //let's get started
+        populationSize = 100
+        mutationFactor = 5
         println "Using genetics to solve: ${nodeList}"
         Random rand = new Random()
+
+        //analysis vars
+        def mutationLog = []
 
         //track population and ratings
         def population = []
@@ -302,6 +307,7 @@ class TSPSolver {
             //evaluate fitness of path
             fitness[i] = getDistanceOfHamiltonianPath(population[i])
         }
+        mutationLog += fitness[0]
 
         //until generation criteria is satisfied
         for (int i=0; i<generations; i++) {
@@ -335,8 +341,8 @@ class TSPSolver {
             }
             //ensure that no nodes were lost in the reproduction
             assert child.size() == nodeList.size()
-            println " --> child[${i}]: ${daddyFitness}"
             childFitness = getDistanceOfHamiltonianPath(child)
+            mutationLog += childFitness
 
             //create new population from parents, child, and mutations of the child
             //1. clear old populations and fitnesses
@@ -361,6 +367,10 @@ class TSPSolver {
                 fitness[j] = getDistanceOfHamiltonianPath(population[j])
             }
         }
+
+        //debug messages for copypasta analysis into graphing tool
+        println " --> Mutation Log:"
+        println " --> ${mutationLog}"
         
         //return the father as the best path, unless the child is fitter
         if (daddyFitness < childFitness) {
