@@ -33,6 +33,9 @@
                 <a class="item" href="loadSet/genetic">
                     VI.&nbsp;&nbsp;Genetic Algorithm
                 </a>
+                <a class="item" href="loadSet/wisdom">
+                    VII.&nbsp;Wisdom of the Crowds
+                </a>
             </div>
             <g:if test="${tsps}">
                 <div class="content">

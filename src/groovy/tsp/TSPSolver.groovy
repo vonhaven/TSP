@@ -12,6 +12,7 @@ class TSPSolver {
     int originalSize
     List<String> runningShortestPath = []
     float runningShortestDistance = -1.0
+    boolean usingCrowds
 
     /** Construct a TSP solver for a two-dimensional system,
         requiring two lists of floating point numbers */
@@ -31,6 +32,7 @@ class TSPSolver {
                 paths.add(path)
             }
         }
+        usingCrowds = false
     }
 
     /** Gets the default path, ordered by the index of the
@@ -274,7 +276,7 @@ class TSPSolver {
         //let's get started
         populationSize = 100
         mutationFactor = 5
-        println "Using genetics to solve: ${nodeList}"
+        if (!usingCrowds) println "Using genetics to solve: ${nodeList}"
         Random rand = new Random()
 
         //analysis vars
@@ -296,9 +298,11 @@ class TSPSolver {
         
         //initialize fitness comparator function
         def cmp = [compare: {a, b -> a.equals(b) ? 0: a<b ? -1: 1}] as Comparator
-        println "Population size: ${populationSize}"
-        println "Mutation Factor: ${mutationFactor}"
-        println "Generations: ${generations}"
+        if (!usingCrowds) {
+            println "Population size: ${populationSize}"
+            println "Mutation Factor: ${mutationFactor}"
+            println "Generations: ${generations}"
+        }
 
         //initialize a population randomly and calculate fitnesses
         for (int i=0; i<populationSize; i++) {
@@ -367,12 +371,16 @@ class TSPSolver {
                 fitness[j] = getDistanceOfHamiltonianPath(population[j])
             }
         }
+        
+        //return the father as the best path, unless the child is fitter
+        if (usingCrowds) {
+            return daddy
+        }
 
         //debug messages for copypasta analysis into graphing tool
         println " --> Mutation Log:"
         println " --> ${mutationLog}"
-        
-        //return the father as the best path, unless the child is fitter
+
         if (daddyFitness < childFitness) {
             println " --> Final parent distance (fitness): ${daddyFitness}"
             return daddy += daddy[0]
@@ -381,5 +389,18 @@ class TSPSolver {
             println " --> Final child distance (fitness): ${childFitness}"
             return child += child[0]
         }
+    }
+
+    /** Runs a set of GAs repeatedly and finds 
+        similarities among solutions */
+    private def solveByWisdom() {
+        println "Solving by Wisdom of the Crowds: ${nodeList}"
+        usingCrowds = true
+        def crowd = []        
+        0..10.each() { i ->
+            crowd[i] = nodeList.clone()
+        }
+        println crowd
+        return nodeList
     }
 }
