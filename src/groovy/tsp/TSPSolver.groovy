@@ -295,7 +295,7 @@ class TSPSolver {
         float childFitness
         
         //initialize fitness comparator function
-        def cmp = [compare: {a, b -> a.equals(b) ? 0: a<b ? -1: 1}] as Comparator
+        def cmpMin = [compare: {a, b -> a.equals(b) ? 0: a<b ? -1: 1}] as Comparator
         if (!usingCrowds) {
             println "Population size: ${populationSize}"
             println "Mutation Factor: ${mutationFactor}"
@@ -314,12 +314,12 @@ class TSPSolver {
         //until generation criteria is satisfied
         for (int i=0; i<generations; i++) {
             //select the best of the population as daddy
-            daddyFitness = fitness.min(cmp)
+            daddyFitness = fitness.min(cmpMin)
             daddy = population[fitness.indexOf(daddyFitness)]
             fitness = fitness.minus(daddyFitness)
             
             //select the next-best of the population as mommy
-            mommyFitness = fitness.min(cmp)
+            mommyFitness = fitness.min(cmpMin)
             mommy = population[fitness.indexOf(mommyFitness)]
             fitness = fitness.minus(mommyFitness)
 
@@ -394,23 +394,73 @@ class TSPSolver {
     private def solveByWisdom() {
         println "Solving by Wisdom of the Crowds: ${nodeList}"
         usingCrowds = true
-        def cmp = [compare: {a, b -> a.equals(b) ? 0: a<b ? -1: 1}] as Comparator
         def crowd = []        
         def fitnesses = []        
+        def edges = [:]
         (0..9).each() { i ->
             crowd[i] = nodeList.clone()
-            def newb = solveByGA(800, 10, 1)
+            def newb = solveByGA(500, 10, 1)
             crowd[i] = newb.path
             fitnesses[i] = newb.distance
-            //TODO run an efficient GA on each d00d
-            //should have a relatively fit population
+            crowd[i].eachWithIndex() { node, j ->
+                if (j < nodeList.size() - 1) {
+                    if (i == 0) edges[j] = []
+                    edges[j] += crowd[i][j + 1]
+                }
+            }
         }
+
         //find the best among the crowds
-        int lowest = fitnesses.min(cmp)
-        def sol = crowd[fitnesses.indexOf(lowest)]
-        //TODO create a map of hops and find any common ones
-        //note each commonality and create a new d00d with them!
-        println " --> Crowdsourced Solution: ${crowd}"
+        //int lowest = fitnesses.min(cmpMin)
+        //def sol = crowd[fitnesses.indexOf(lowest)]
+
+        //start with origin and determine the next node
+        //by its popularity within the crowd
+        for (int i=0; i<nodeList.size() - 1; i++) {
+            def votes = [:]
+
+            //initialize voting system for all nodes
+            //start with zero votes
+            for (int j=0; j<nodeList.size(); j++) {
+                votes[j] = 0
+            }
+
+            //for this node, compute the number of
+            //total votes for each next node
+            edges[i].each() { nextNode ->
+                votes[nextNode] += 1
+            }
+
+            //print the votes
+            println " --> Votes: ${votes}"
+            
+            //for each node, add the best next node
+            //based on the votes
+        }
+
+        //process votes and determine a coolio path
+        def sol = [0]
+        while (sol.size() < nodeList.size()) {
+            //voting system
+
+            //determine the best next
+            def bestNext
+            boolean done = false
+            while (!done) {
+                bestNext = votes.max { it.value }.key
+                println " --> bestNext = ${bestNext}"
+                votes.remove(bestNext)
+                if (!sol.contains(bestNext)) {
+                    println "Current sol: ${sol}"
+                    println "Try adding: ${bestNext} ?"
+                    done = true
+                }
+            }
+            sol += bestNext
+        }
+
+        //print solution and return
+        println " --> Crowdsourced Solution: ${sol}"
         return sol
     }
 }
