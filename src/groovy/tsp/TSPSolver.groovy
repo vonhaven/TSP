@@ -274,8 +274,6 @@ class TSPSolver {
         the TSP's set of nodes */
     private def solveByGA(int generations, int populationSize, int mutationFactor) {
         //let's get started
-        populationSize = 100
-        mutationFactor = 5
         if (!usingCrowds) println "Using genetics to solve: ${nodeList}"
         Random rand = new Random()
 
@@ -374,7 +372,7 @@ class TSPSolver {
         
         //return the father as the best path, unless the child is fitter
         if (usingCrowds) {
-            return daddy
+            return [path: daddy, distance: daddyFitness]
         }
 
         //debug messages for copypasta analysis into graphing tool
@@ -396,11 +394,23 @@ class TSPSolver {
     private def solveByWisdom() {
         println "Solving by Wisdom of the Crowds: ${nodeList}"
         usingCrowds = true
+        def cmp = [compare: {a, b -> a.equals(b) ? 0: a<b ? -1: 1}] as Comparator
         def crowd = []        
-        0..10.each() { i ->
+        def fitnesses = []        
+        (0..9).each() { i ->
             crowd[i] = nodeList.clone()
+            def newb = solveByGA(800, 10, 1)
+            crowd[i] = newb.path
+            fitnesses[i] = newb.distance
+            //TODO run an efficient GA on each d00d
+            //should have a relatively fit population
         }
-        println crowd
-        return nodeList
+        //find the best among the crowds
+        int lowest = fitnesses.min(cmp)
+        def sol = crowd[fitnesses.indexOf(lowest)]
+        //TODO create a map of hops and find any common ones
+        //note each commonality and create a new d00d with them!
+        println " --> Crowdsourced Solution: ${crowd}"
+        return sol
     }
 }
