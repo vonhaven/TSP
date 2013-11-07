@@ -395,72 +395,65 @@ class TSPSolver {
         println "Solving by Wisdom of the Crowds: ${nodeList}"
         usingCrowds = true
         def crowd = []        
-        def fitnesses = []        
         def edges = [:]
-        (0..9).each() { i ->
+        for (int i=0; i < nodeList.size(); i++) {
+            edges[i] = [] 
+        }
+        for (int i=0; i < 10; i++) {
             crowd[i] = nodeList.clone()
-            def newb = solveByGA(500, 10, 1)
-            crowd[i] = newb.path
-            fitnesses[i] = newb.distance
-            crowd[i].eachWithIndex() { node, j ->
-                if (j < nodeList.size() - 1) {
-                    if (i == 0) edges[j] = []
-                    edges[j] += crowd[i][j + 1]
-                }
+            def species = solveByGA(800, 10, 1)
+            crowd[i] = species.path
+            println " --> Species: ${crowd[i]}"
+            crowd[i].eachWithIndex() { n, j ->
+                edges[n] += crowd[i][(j + 1) % (crowd[i].size())]
             }
         }
 
-        //find the best among the crowds
-        //int lowest = fitnesses.min(cmpMin)
-        //def sol = crowd[fitnesses.indexOf(lowest)]
+        println " --> Edges: ${edges}"
 
-        //start with origin and determine the next node
-        //by its popularity within the crowd
-        for (int i=0; i<nodeList.size() - 1; i++) {
+        //process votes and determine an aggregate
+        //path which s superior to any singular
+        //genetic algorithm's solution:
+        //this part is the "Wisdom of the Crowds"
+        def sol = [0]
+        while (sol.size() < nodeList.size()) {
+            int i = sol[sol.size() - 1]
             def votes = [:]
-
-            //initialize voting system for all nodes
-            //start with zero votes
             for (int j=0; j<nodeList.size(); j++) {
                 votes[j] = 0
             }
-
-            //for this node, compute the number of
-            //total votes for each next node
             edges[i].each() { nextNode ->
                 votes[nextNode] += 1
             }
 
-            //print the votes
-            println " --> Votes: ${votes}"
-            
-            //for each node, add the best next node
-            //based on the votes
-        }
+            //a node can never appear after itself!
+            //this is a valuable sanity check...
+            println " --> Votes for node [${i}]: ${votes}"
 
-        //process votes and determine a coolio path
-        def sol = [0]
-        while (sol.size() < nodeList.size()) {
-            //voting system
-
-            //determine the best next
+            //determine the best next node
+            //(the one with the most votes)
             def bestNext
             boolean done = false
             while (!done) {
                 bestNext = votes.max { it.value }.key
-                println " --> bestNext = ${bestNext}"
                 votes.remove(bestNext)
                 if (!sol.contains(bestNext)) {
-                    println "Current sol: ${sol}"
-                    println "Try adding: ${bestNext} ?"
+                    if (votes[bestNext] <= 1) {
+                        def remainingSet = nodeList.minus(sol)
+                        float bestDist = -1.0
+                        remainingSet.each() { n ->
+                            float d = getDistanceBetweenNodes(i, n)
+                            if (bestDist < 0.0 || d < bestDist) {
+                                bestDist = d
+                                bestNext = n
+                            }
+                        }
+                    }
                     done = true
                 }
             }
             sol += bestNext
         }
-
-        //print solution and return
-        println " --> Crowdsourced Solution: ${sol}"
         return sol
     }
 }
