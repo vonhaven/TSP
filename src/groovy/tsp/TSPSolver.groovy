@@ -399,7 +399,7 @@ class TSPSolver {
         for (int i=0; i < nodeList.size(); i++) {
             edges[i] = [] 
         }
-        for (int i=0; i < 10; i++) {
+        for (int i=0; i < 15; i++) {
             crowd[i] = nodeList.clone()
             def species = solveByGA(800, 10, 1)
             crowd[i] = species.path
@@ -436,9 +436,11 @@ class TSPSolver {
             boolean done = false
             while (!done) {
                 bestNext = votes.max { it.value }.key
+                int numVotes = votes[bestNext]
                 votes.remove(bestNext)
                 if (!sol.contains(bestNext)) {
-                    if (votes[bestNext] <= 1) {
+                    if (numVotes <= 1) {
+                        println " --> Not enough votes for any node: Resorting to Greed..."
                         def remainingSet = nodeList.minus(sol)
                         float bestDist = -1.0
                         remainingSet.each() { n ->
@@ -454,6 +456,7 @@ class TSPSolver {
             }
             sol += bestNext
         }
+        println " --> Distance: ${getDistanceOfHamiltonianPath(sol)}"
         return sol
     }
 }
